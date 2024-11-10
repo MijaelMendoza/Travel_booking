@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "268735114777",
+    "project_id": "carretera-1c328",
+    "storage_bucket": "carretera-1c328.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268735114777:android:66d6be2dbe961f0d314488",
+        "android_client_info": {
+          "package_name": "com.example.carretera"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnHr2BXqSz_mHiCBUUC9moKOQj4swXsl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
