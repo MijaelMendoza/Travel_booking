@@ -256,32 +256,7 @@ class _SignInPageState extends State<SignInPage> {
                       height: 40,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    constraints: const BoxConstraints(
-                        maxWidth: 90), // Set max width here
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(16),
-                      color: const Color.fromRGBO(255, 255, 255, 1),
-                    ),
-                    child: Image.asset(
-                      'assets/images/SpaceX.png',
-                      height: 40,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(16),
-                      color: const Color.fromRGBO(255, 255, 255, 1),
-                    ),
-                    child: Image.asset(
-                      'assets/images/Nasa.png',
-                      height: 40,
-                    ),
-                  ),
+                 
                 ],
               ),
             ),
