@@ -11,7 +11,7 @@ class TicketsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 242, 243, 244),
         title: const Text(
-          'Your Tickets',
+          'Tus Tickets',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -96,7 +96,7 @@ class TicketsPage extends StatelessWidget {
                         ),
                         child: const Center(
                           child: Text(
-                            'Done',
+                            'Hecho',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

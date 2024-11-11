@@ -22,15 +22,16 @@ class MyAccountPage extends StatelessWidget {
             const SizedBox(height: 20), // Adding some spacing
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Navigate back when the button is pressed
+                Navigator.of(context)
+                    .pop(); // Navigate back when the button is pressed
               },
-              child: const Text("Back"),
+              child: const Text("Atrás"),
             ),
           ],
         ),
-     ),
-);
-}
+      ),
+    );
+  }
 }
 
 // demo -------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ class MyBookingsPage extends StatelessWidget {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: Text(
-          "My Bookings",
+          "Mis Reservas",
           style: TextStyle(
             color: Color.fromARGB(255, 0, 0, 0),
             fontSize: 30,

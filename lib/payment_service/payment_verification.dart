@@ -16,7 +16,7 @@ class Verification extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 242, 243, 244),
         title: const Text(
-          'Payment Verifitation',
+          'Verificación de pagos',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         iconTheme: IconThemeData(color: Colors.black),
@@ -169,7 +169,7 @@ class Verification extends StatelessWidget {
                         ),
                         child: const Center(
                           child: Text(
-                            'Verify Payment',
+                            'Verificar Pago',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

@@ -12,7 +12,7 @@ class NotificationsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Notifications",
+              "Notificaciones",
               style: TextStyle(
                 color: Color.fromARGB(255, 0, 0, 0),
                 fontSize: 30,
@@ -22,9 +22,10 @@ class NotificationsPage extends StatelessWidget {
             const SizedBox(height: 20), // Adding some spacing
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Navigate back when the button is pressed
+                Navigator.of(context)
+                    .pop(); // Navigate back when the button is pressed
               },
-              child: const Text("Back"),
+              child: const Text("Atrás"),
             ),
           ],
         ),

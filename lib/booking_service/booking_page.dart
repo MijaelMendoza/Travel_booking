@@ -2,7 +2,6 @@ import 'package:carretera/components/bottom_navbar.dart';
 import 'package:carretera/payment_service/payment_page.dart';
 import 'package:flutter/material.dart';
 
-
 class Booking extends StatelessWidget {
   const Booking({super.key});
 
@@ -88,7 +87,7 @@ class Booking extends StatelessWidget {
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              'User Name', // Placeholder text
+                                              'Nombre de usuario', // Placeholder text
                                           hintStyle: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -121,7 +120,7 @@ class Booking extends StatelessWidget {
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              'User Name', // Placeholder text
+                                              'Nombre de usuario', // Placeholder text
                                           hintStyle: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -154,7 +153,7 @@ class Booking extends StatelessWidget {
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              'User Name', // Placeholder text
+                                              'Nombre de usuario', // Placeholder text
                                           hintStyle: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -187,7 +186,7 @@ class Booking extends StatelessWidget {
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText:
-                                              'User Name', // Placeholder text
+                                              'Nombre de usuario', // Placeholder text
                                           hintStyle: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -311,7 +310,7 @@ class Booking extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Ticket Prices',
+                        'Precio de Tickets',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -331,7 +330,7 @@ class Booking extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'For one ticket',
+                                    'Para un Ticket',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -351,7 +350,7 @@ class Booking extends StatelessWidget {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    'Space Tax',
+                                    'Impuesto',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -477,7 +476,7 @@ class Booking extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Cancel',
+                      'Cancelar',
                       style: TextStyle(
                           color: Color.fromARGB(255, 0, 73, 255),
                           fontSize: 16,
@@ -521,7 +520,7 @@ class Booking extends StatelessWidget {
                       ),
                       child: const Center(
                         child: Text(
-                          'Pay',
+                          'Pago',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

@@ -23,7 +23,7 @@ class _PaymentState extends State<Payment> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text(
-          'Make Payment',
+          'Hacer un pago',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         iconTheme: IconThemeData(color: Colors.black),
@@ -69,7 +69,7 @@ class _PaymentState extends State<Payment> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Ticket Prices',
+                                'Precios de Tickets',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 20,
@@ -93,7 +93,7 @@ class _PaymentState extends State<Payment> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'For one ticket',
+                                              'Para un ticket',
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
@@ -103,7 +103,7 @@ class _PaymentState extends State<Payment> {
                                             ),
                                             SizedBox(height: 8),
                                             Text(
-                                              'No of tickets',
+                                              'No de tickets',
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
@@ -217,7 +217,7 @@ class _PaymentState extends State<Payment> {
                     const Padding(
                       padding: EdgeInsets.only(bottom: 16.0),
                       child: Text(
-                        'Choose Payment Method',
+                        'Escoge un método de pago',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -245,7 +245,7 @@ class _PaymentState extends State<Payment> {
                               activeColor: const Color.fromARGB(255, 234, 6, 6),
                             ),
                             Text(
-                              'Credit Card',
+                              'Tarjeta de crédito',
                               style: TextStyle(
                                 color: selectedPaymentMethod == 1
                                     ? Colors.blue
@@ -270,7 +270,7 @@ class _PaymentState extends State<Payment> {
                               },
                             ),
                             Text(
-                              'Bank Transfer',
+                              'Transferencia bancaria',
                               style: TextStyle(
                                 color: selectedPaymentMethod == 2
                                     ? Colors.blue
@@ -330,7 +330,7 @@ class _PaymentState extends State<Payment> {
                       ),
                     ),
                     child: const Text(
-                      'Cancel',
+                      'Cancelar',
                       style: TextStyle(
                           color: Color.fromARGB(255, 0, 73, 255),
                           fontSize: 16,
@@ -347,7 +347,7 @@ class _PaymentState extends State<Payment> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text(
-                                  'Please select a card/bank before making payment.')),
+                                  'Seleccione una tarjeta/banco antes de efectuar el pago.')),
                         );
                       } else {
                         // Proceed to the Verification screen
@@ -389,7 +389,7 @@ class _PaymentState extends State<Payment> {
                       ),
                       child: const Center(
                         child: Text(
-                          'Pay',
+                          'Pago',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

@@ -55,7 +55,10 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyAccountPage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyAccountPage()));
                       },
                       child: Container(
                         height: accountButtonHeight,
@@ -85,9 +88,10 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Text(
-                                    'User Name',
+                                    'Nombre de Usuario',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -96,7 +100,8 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Text(
                                     'User ID: 123456',
                                     style: TextStyle(
@@ -118,7 +123,11 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(20.0),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsPage()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsPage()));
                         },
                         child: Container(
                           width: accountButtonHeight,
@@ -165,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     const SizedBox(height: 20),
                     const Text(
-                      "Find Your Tour",
+                      "Encuentra tu tour",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -193,8 +202,8 @@ class _HomePageState extends State<HomePage> {
                             controller: fieldTextEditingController,
                             focusNode: fieldFocusNode,
                             decoration: InputDecoration(
-                              labelText: "From",
-                              hintText: "Select a space station",
+                              labelText: "Desde",
+                              hintText: "Selecciona un destino",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16.0),
                                 borderSide: BorderSide(color: Colors.blue),
@@ -226,8 +235,8 @@ class _HomePageState extends State<HomePage> {
                             controller: fieldTextEditingController,
                             focusNode: fieldFocusNode,
                             decoration: InputDecoration(
-                              labelText: "To",
-                              hintText: "Select a space station",
+                              labelText: "Hasta",
+                              hintText: "Selecciona un destino",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16.0),
                                 borderSide: BorderSide(color: Colors.blue),
@@ -251,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                               readOnly: true,
                               onTap: () => _selectDate(context),
                               decoration: InputDecoration(
-                                labelText: 'Select Date',
+                                labelText: 'Selecciona una fecha',
                                 labelStyle: const TextStyle(color: Colors.blue),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16.0),
@@ -268,8 +277,8 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: TextFormField(
                               decoration: InputDecoration(
-                                labelText: 'Passengers',
-                                hintText: "Number of passengers",
+                                labelText: 'Pasajeros',
+                                hintText: "Numero de pasajeros",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
@@ -301,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              'Search',
+                              'Buscar',
                               style: TextStyle(
                                   fontSize: 16.0, color: Colors.white),
                             ),
@@ -348,7 +357,7 @@ class _HomePageState extends State<HomePage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: displayWidth * .025),
                         child: Text(
-                          'Best Destinations',
+                          'Mejores Destinos',
                           style: TextStyle(
                             fontSize: displayWidth * .05,
                             fontWeight: FontWeight.bold,
@@ -410,7 +419,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: EdgeInsets.only(top: displayWidth * .01),
                             child: Text(
-                              'The Best Tours',
+                              'Los Mejores Tours',
                               style: TextStyle(
                                 fontSize: displayWidth * .05,
                                 fontWeight: FontWeight.bold,
@@ -528,7 +537,8 @@ class GradientButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero, backgroundColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+        backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0),
         ),

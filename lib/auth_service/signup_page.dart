@@ -15,7 +15,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final confirmPwController = TextEditingController();
   bool _obscureText = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   Future<void> _register() async {
     final email = idcontroller.text.trim();
     final password = pwcontroller.text.trim();
@@ -58,7 +58,6 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 16, right: 8),
-                    child: Text('Start your journey with',
+                    child: Text('Empieza tu viaje con',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -117,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 16),
-                    child: Text('Travel Nebula',
+                    child: Text('Travago',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -152,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  hintText: 'Password',
+                  hintText: 'Contraseña',
                   hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -178,7 +177,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  hintText: 'Re-enter Password',
+                  hintText: 'Rescribe la contraseña',
                   hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -323,7 +322,7 @@ class _SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Already have an account?',
+                  'Ya tienes una cuenta?',
                   style: TextStyle(fontSize: 18),
                 ),
                 GestureDetector(

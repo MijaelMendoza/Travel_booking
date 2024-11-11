@@ -367,7 +367,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Travel Path',
+                        'Camino',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -788,7 +788,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                     const Row(
                       children: [
                         Text(
-                          'Climate',
+                          'Clima',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -825,7 +825,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                     const Row(
                       children: [
                         Text(
-                          'Population Chart',
+                          'Poblacion',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -870,7 +870,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                           child: const Row(
                             children: [
                               Text(
-                                'Luggage Information',
+                                'Información sobre equipajes',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 20,
@@ -957,7 +957,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                     ),
                   ),
                   child: const Text(
-                    'Cancel',
+                    'Cancelar',
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 73, 255),
                         fontSize: 16,
@@ -1001,7 +1001,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                     ),
                     child: const Center(
                       child: Text(
-                        'Book Tour',
+                        'Reserva Tour',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

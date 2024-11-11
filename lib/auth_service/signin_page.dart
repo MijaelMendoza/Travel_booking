@@ -89,7 +89,7 @@ class _SignInPageState extends State<SignInPage> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 16, right: 8),
-                    child: Text('Start your journey with',
+                    child: Text('Empieza tu viaje con',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -97,7 +97,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 16),
-                    child: Text('Travel Nebula',
+                    child: Text('Travago',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
@@ -116,7 +116,7 @@ class _SignInPageState extends State<SignInPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    hintText: 'User ID or E-mail',
+                    hintText: 'CI ó E-mail',
                     hintStyle:
                         const TextStyle(color: Colors.grey, fontSize: 20)),
               ),
@@ -136,7 +136,7 @@ class _SignInPageState extends State<SignInPage> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  hintText: 'Password',
+                  hintText: 'Contraseña',
                   hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -291,7 +291,7 @@ class _SignInPageState extends State<SignInPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Don\'t have an account?',
+                    'No tienes una cuenta?',
                     style: TextStyle(fontSize: 18),
                   ),
                   GestureDetector(

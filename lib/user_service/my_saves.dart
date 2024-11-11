@@ -9,7 +9,7 @@ class MySavesPage extends StatelessWidget {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: Text(
-          "My Saves",
+          "Guardados",
           style: TextStyle(
             color: Color.fromARGB(255, 0, 0, 0),
             fontSize: 30,
