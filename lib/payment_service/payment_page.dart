@@ -1,6 +1,6 @@
+import 'package:carretera/components/bottom_navbar.dart';
+import 'package:carretera/payment_service/payment_verification.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/bottom_navbar.dart';
-import 'package:carretera/pages/payment_verification.dart';
 
 import 'bank_card.dart';
 

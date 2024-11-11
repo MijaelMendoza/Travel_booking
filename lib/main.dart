@@ -1,12 +1,8 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:carretera/auth_service/signin_page.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/booking_page.dart';
-import 'package:carretera/pages/elysium_colony.dart';
-import 'package:carretera/pages/payment_page.dart';
-import 'pages/home_page.dart';
-import 'pages/signin_page.dart';
-import 'pages/signup_page.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 

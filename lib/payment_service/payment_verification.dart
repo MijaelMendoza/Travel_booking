@@ -1,5 +1,5 @@
+import 'package:carretera/booking_service/tickets_page.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/tickets_page.dart';
 
 import 'bank_card.dart';
 

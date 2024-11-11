@@ -1,7 +1,7 @@
+import 'package:carretera/components/elysium_colony.dart';
+import 'package:carretera/user_service/my_account.dart';
+import 'package:carretera/user_service/notifications_page.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/elysium_colony.dart';
-import 'package:carretera/pages/my_account.dart';
-import 'package:carretera/pages/notifications_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

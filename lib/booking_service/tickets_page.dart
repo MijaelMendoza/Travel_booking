@@ -1,5 +1,5 @@
+import 'package:carretera/components/bottom_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/bottom_navbar.dart';
 
 class TicketsPage extends StatelessWidget {
   const TicketsPage({super.key});

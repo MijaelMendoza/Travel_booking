@@ -1,6 +1,6 @@
+import 'package:carretera/booking_service/booking_page.dart';
+import 'package:carretera/components/bottom_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/booking_page.dart';
-import 'package:carretera/pages/bottom_navbar.dart';
 
 class ElysiumColony extends StatefulWidget {
   const ElysiumColony({super.key});

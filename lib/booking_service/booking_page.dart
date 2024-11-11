@@ -1,7 +1,7 @@
+import 'package:carretera/components/bottom_navbar.dart';
+import 'package:carretera/payment_service/payment_page.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/bottom_navbar.dart';
 
-import 'package:carretera/pages/payment_page.dart';
 
 class Booking extends StatelessWidget {
   const Booking({super.key});

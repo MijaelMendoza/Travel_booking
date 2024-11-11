@@ -1,9 +1,9 @@
+import 'package:carretera/user_service/my_account.dart';
+import 'package:carretera/user_service/my_bookings.dart';
+import 'package:carretera/user_service/my_saves.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:carretera/pages/my_account.dart';
 import 'home_page.dart';
-import 'my_bookings.dart';
-import 'my_saves.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});

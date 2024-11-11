@@ -1,9 +1,7 @@
+import 'package:carretera/auth_service/signup_page.dart';
+import 'package:carretera/components/bottom_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:carretera/pages/booking_page.dart';
-import 'package:carretera/pages/bottom_navbar.dart';
-import 'package:carretera/pages/home_page.dart';
-import 'package:carretera/pages/signup_page.dart';
 
 @override
 SignInPage createState() => SignInPage();
