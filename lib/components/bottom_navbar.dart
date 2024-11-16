@@ -159,10 +159,10 @@ class NavBarState extends State<NavBar> {
   ];
 
   List<String> listOfStrings = [
-    'Home',
-    'Bookings',
-    'Saves',
-    'Account',
+    'Inicio',
+    'Reservas',
+    'Guardados',
+    'Mi cuenta',
   ];
 
   List<Widget> screens = [

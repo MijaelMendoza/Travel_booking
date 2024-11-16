@@ -12,13 +12,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> stationNames = [
-    'Nebula Station Los Alamos - Earth',
-    'Option 2 - Earth',
-    'Nebula Station Elysium Colony - Mars',
-    'Option 2 - Mars',
+    'Playas de cancun',
+    'Playa de maiami',
+    'Caribe',
+    'Himalaya',
   ];
 
-  String _selectedSortOption = 'Ratings';
+  String _selectedSortOption = 'Calificaciones';
 
   DateTime? selectedDate;
 
@@ -371,24 +371,24 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           LocationButton(
                             imageAsset: 'assets/images/location1.png',
-                            title: 'Elysium Colony\n',
-                            description: 'Destination',
+                            title: 'Playas de cancun\n',
+                            description: 'Destino',
                             onTap: () {
                               // Navigate to the related pages
                             },
                           ),
                           LocationButton(
                             imageAsset: 'assets/images/location2.png',
-                            title: 'Olympus X\n',
-                            description: 'Destination',
+                            title: 'Playas de miami\n',
+                            description: 'Destino',
                             onTap: () {
                               // Navigate to the related pages
                             },
                           ),
                           LocationButton(
                             imageAsset: 'assets/images/location3.png',
-                            title: 'Meridian Space\n',
-                            description: 'Destination',
+                            title: 'Caribe\n',
+                            description: 'Destino',
                             onTap: () {
                               // Navigate to the related pages
                             },
@@ -431,7 +431,7 @@ class _HomePageState extends State<HomePage> {
                             child: TextButton(
                               onPressed: () {},
                               style: ButtonStyle(),
-                              child: Text("More"),
+                              child: Text("Mas"),
                             ),
                           )
                         ],
@@ -443,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Sorted by',
+                            'Ordenar por',
                             style: TextStyle(
                               fontSize: displayWidth * .04,
                               fontWeight: FontWeight.w400,
@@ -458,9 +458,9 @@ class _HomePageState extends State<HomePage> {
                               });
                             },
                             items: <String>[
-                              'Ratings',
-                              'Price',
-                              'Passenger Capacity',
+                              'Calificaciones',
+                              'Precio',
+                              'Capacidad',
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -477,8 +477,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           LongButton(
                             imageAsset: 'assets/images/travel1.png',
-                            description: 'Description',
-                            title: 'Nebula Shuttle X',
+                            description: 'Descripcion',
+                            title: 'Avion 404',
                             backgroundColor: Color.fromARGB(255, 9, 0, 136),
                             onTap: () {
                               // Handle button tap action
@@ -486,8 +486,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                           LongButton(
                             imageAsset: 'assets/images/travel2.png',
-                            description: 'Description',
-                            title: 'Nebula Z11',
+                            description: 'Descripcion',
+                            title: 'Avion Z11',
                             backgroundColor: Color.fromARGB(255, 255, 42, 42),
                             onTap: () {
                               // Handle button tap action
@@ -495,8 +495,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                           LongButton(
                             imageAsset: 'assets/images/travel3.png',
-                            description: 'Description',
-                            title: 'Nebula YX1',
+                            description: 'Descripcion',
+                            title: 'Avion YX1',
                             backgroundColor: Color.fromARGB(255, 137, 161, 138),
                             onTap: () {
                               // Handle button tap action

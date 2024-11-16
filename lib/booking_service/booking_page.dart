@@ -218,7 +218,7 @@ class Booking extends StatelessWidget {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Departure\n',
+                                            text: 'Partida\n',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 16,
@@ -227,7 +227,7 @@ class Booking extends StatelessWidget {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: '27th Aug',
+                                            text: '27 de Agosto',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -243,7 +243,7 @@ class Booking extends StatelessWidget {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Arrival\n',
+                                            text: 'Llegada\n',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 16,
@@ -252,7 +252,7 @@ class Booking extends StatelessWidget {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: '25th Mar',
+                                            text: '25 de Marzo',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -277,7 +277,7 @@ class Booking extends StatelessWidget {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: 'Passengers',
+                                            text: 'Pasajeros',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -340,7 +340,7 @@ class Booking extends StatelessWidget {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    'No of tickets',
+                                    'No de tickets',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,

@@ -12,7 +12,7 @@ class MyAccountPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "My Account",
+              "Mi Cuenta",
               style: TextStyle(
                 color: Color.fromARGB(255, 0, 0, 0),
                 fontSize: 30,

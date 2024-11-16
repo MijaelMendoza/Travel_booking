@@ -95,7 +95,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                             child: const Row(
                               children: [
                                 Text(
-                                  'Elysium Colony',
+                                  'Playas de cacun',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 24,
@@ -223,7 +223,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '7 months',
+                                    '7 Meses',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -234,7 +234,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                   ),
                                   SizedBox(height: 3),
                                   Text(
-                                    '24,600 mph',
+                                    '50 km/h',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -245,7 +245,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                   ),
                                   SizedBox(height: 3),
                                   Text(
-                                    '2 Space Stations',
+                                    '2 Paradas',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -306,7 +306,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                   ),
                                   SizedBox(height: 3),
                                   Text(
-                                    '5 643 Reviews',
+                                    '5 643 Resenas',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -317,7 +317,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                   ),
                                   SizedBox(height: 3),
                                   Text(
-                                    '2 465 Saves',
+                                    '2 465 Guardados',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -413,7 +413,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '27th August',
+                                            '27 de agosto',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -428,7 +428,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                               TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                    text: 'Departure at',
+                                                    text: 'Partida en',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 12,
@@ -448,7 +448,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'NebulaX',
+                                                    text: 'Mexico',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -468,7 +468,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Station ',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -478,7 +478,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Los Alamos ',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 10,
@@ -502,7 +502,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '3rd October',
+                                            '3 de Octubre',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -518,7 +518,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                               TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                    text: 'Space',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -538,7 +538,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Station ',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -570,7 +570,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                   ),
                                                   TextSpan(
                                                     text:
-                                                        '38.5 million km away to Mars\n16.4 million km away from Earth\n',
+                                                        '350 KM',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 12,
@@ -594,7 +594,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '7th January',
+                                            '7 de enero',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -610,7 +610,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                               TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                    text: 'Space',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -630,7 +630,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Station ',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -662,7 +662,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                   ),
                                                   TextSpan(
                                                     text:
-                                                        '18.2 million km away to Mars\n36.7 million km away from Earth\n',
+                                                        '250 KM',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 12,
@@ -686,7 +686,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '25th March',
+                                            '25 de Marzo',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
@@ -701,7 +701,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                               TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                    text: 'Arrival to',
+                                                    text: 'LLegada a',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 12,
@@ -721,7 +721,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'NebulaX',
+                                                    text: 'Estacion',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -741,7 +741,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Station ',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -751,7 +751,7 @@ class _ElysiumColonyState extends State<ElysiumColony> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: 'Elysium',
+                                                    text: 'Estacion ',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 10,

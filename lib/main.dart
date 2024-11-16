@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
         splash: Image.asset(
-          'assets/images/nebulalogo.png',
+          'assets/images/nebulalogo.jpg',
         ),
         nextScreen: SignInPage(),
         splashTransition: SplashTransition.slideTransition,
