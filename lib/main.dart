@@ -4,9 +4,10 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Inicializa Firebase usando las opciones específicas para la plataforma
@@ -14,6 +15,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Configura la persistencia en plataformas web
+ 
   runApp(
     DevicePreview(
       enabled: !true, // Cambia a true para habilitar el Device Preview

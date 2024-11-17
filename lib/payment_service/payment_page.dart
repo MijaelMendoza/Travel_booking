@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carretera/components/bottom_navbar.dart';
 import 'package:carretera/payment_service/payment_verification.dart';
 import 'package:flutter/material.dart';
 
+// Importa BankCard y Bank desde su archivo original
 import 'bank_card.dart';
 
 class Payment extends StatefulWidget {
@@ -15,6 +17,77 @@ class _PaymentState extends State<Payment> {
   int selectedPaymentMethod = 1; // 0: None, 1: Credit Card, 2: Bank Transfer
   BankCard? selectedCard;
   Bank? selectedBank;
+
+  // Variables para almacenar detalles del ticket y pago
+  double ticketPrice = 250000;
+  int ticketCount = 4;
+  double tax = 20000;
+  double totalAmount = 1020000;
+
+  String selectedImage = ''; // Imagen seleccionada para tarjeta o banco
+
+  Future<void> registerPaymentAndTickets() async {
+    if (selectedCard == null && selectedBank == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Seleccione un método de pago antes de continuar.'),
+        ),
+      );
+      return;
+    }
+
+    String paymentMethod = selectedCard != null ? "Tarjeta de Crédito" : "Transferencia Bancaria";
+
+    try {
+      // Registrar el pago en Firebase
+      CollectionReference payments = FirebaseFirestore.instance.collection('payments');
+      DocumentReference paymentDoc = await payments.add({
+        'method': paymentMethod,
+        'totalAmount': totalAmount,
+        'ticketPrice': ticketPrice,
+        'ticketCount': ticketCount,
+        'tax': tax,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      // Registrar los tickets asociados al pago
+      CollectionReference tickets = FirebaseFirestore.instance.collection('tickets');
+      for (int i = 1; i <= ticketCount; i++) {
+        await tickets.add({
+          'paymentId': paymentDoc.id,
+          'ticketNumber': i,
+          'ticketPrice': ticketPrice,
+          'tax': tax,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pago y tickets registrados exitosamente en la base de datos.'),
+        ),
+      );
+
+      // Navega a la pantalla de verificación
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Verification(
+            selectedCard: selectedCard,
+            selectedBank: selectedBank,
+          ),
+        ),
+      );
+    } catch (e) {
+      print("Error al registrar el pago y tickets: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al registrar el pago y tickets: $e'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double displayWidth = MediaQuery.of(context).size.width;
@@ -33,8 +106,7 @@ class _PaymentState extends State<Payment> {
           ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 30.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
                 child: Container(
                   width: displayWidth,
                   decoration: ShapeDecoration(
@@ -58,11 +130,8 @@ class _PaymentState extends State<Payment> {
                         width: displayWidth,
                         fit: BoxFit.cover,
                       ),
-
-                      //ticket details
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 30.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
                         child: SizedBox(
                           width: displayWidth,
                           child: Column(
@@ -82,16 +151,13 @@ class _PaymentState extends State<Payment> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Column(
+                                        Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: const [
                                             Text(
                                               'Para un ticket',
                                               style: TextStyle(
@@ -113,7 +179,7 @@ class _PaymentState extends State<Payment> {
                                             ),
                                             SizedBox(height: 8),
                                             Text(
-                                              'Space Tax',
+                                              'Impuesto',
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
@@ -124,75 +190,67 @@ class _PaymentState extends State<Payment> {
                                           ],
                                         ),
                                         const SizedBox(width: 159),
-                                        Container(
-                                          child: const Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                '\$ 250 000',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Inter',
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              '\$ ${ticketPrice.toStringAsFixed(2)}',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              SizedBox(height: 8),
-                                              Text(
-                                                '4',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Inter',
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              '$ticketCount',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              SizedBox(height: 8),
-                                              Text(
-                                                '\$ 20 000',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Inter',
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              '\$ ${tax.toStringAsFixed(2)}',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 16),
-                                    Container(
-                                      child: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Total',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontFamily: 'Inter',
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Total',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                          SizedBox(width: 186),
-                                          Text(
-                                            '\$ 1 020 000',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontFamily: 'Inter',
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        ),
+                                        Text(
+                                          '\$ ${totalAmount.toStringAsFixed(2)}',
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -205,12 +263,8 @@ class _PaymentState extends State<Payment> {
                   ),
                 ),
               ),
-
-              //radio button
-
               Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -229,66 +283,16 @@ class _PaymentState extends State<Payment> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Radio<int>(
-                              value: 1,
-                              groupValue: 0, // Set to the selected value
-                              onChanged: (int? value) {
-                                // Handle radio button selection
-                                setState(() {
-                                  selectedPaymentMethod = value ?? 0;
-                                  selectedCard = null; // Reset selected card
-                                  selectedBank = null; // Reset selected bank
-                                });
-                              },
-                              activeColor: const Color.fromARGB(255, 234, 6, 6),
-                            ),
-                            Text(
-                              'Tarjeta de crédito',
-                              style: TextStyle(
-                                color: selectedPaymentMethod == 1
-                                    ? Colors.blue
-                                    : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildPaymentOption(1, 'Tarjeta de crédito'),
                         const SizedBox(width: 20),
-                        Row(
-                          children: [
-                            Radio<int>(
-                              value: 2,
-                              groupValue: 0, // Set to the selected value
-                              onChanged: (int? value) {
-                                // Handle radio button selection
-                                setState(() {
-                                  selectedPaymentMethod = value ?? 0;
-                                  selectedCard = null; // Reset selected card
-                                  selectedBank = null; // Reset selected bank
-                                });
-                              },
-                            ),
-                            Text(
-                              'Transferencia bancaria',
-                              style: TextStyle(
-                                color: selectedPaymentMethod == 2
-                                    ? Colors.blue
-                                    : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildPaymentOption(2, 'Transferencia bancaria'),
                       ],
                     ),
                   ],
                 ),
               ),
-              if (selectedPaymentMethod == 1) // Credit Card selected
-                _buildCreditCardSection(),
-              if (selectedPaymentMethod == 2) // Bank Transfer selected
-                _buildBankTransferSection(),
-
+              if (selectedPaymentMethod == 1) _buildCreditCardSection(),
+              if (selectedPaymentMethod == 2) _buildBankTransferSection(),
               const SizedBox(height: 150),
             ],
           ),
@@ -312,65 +316,34 @@ class _PaymentState extends State<Payment> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Cancer Button
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const NavBar()));
+                        context,
+                        MaterialPageRoute(builder: (context) => const NavBar()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       minimumSize: Size(displayWidth * .44, displayWidth * .16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50.0),
-                        side: const BorderSide(
-                            color: Color.fromARGB(255, 0, 73, 255)),
+                        side: const BorderSide(color: Color.fromARGB(255, 0, 73, 255)),
                       ),
                     ),
                     child: const Text(
                       'Cancelar',
                       style: TextStyle(
-                          color: Color.fromARGB(255, 0, 73, 255),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800),
+                        color: Color.fromARGB(255, 0, 73, 255),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
-
-                  // Book Your Tour Button (Gradient Button)
                   InkWell(
-                    onTap: () {
-                      // Handle second button tap here
-                      if (selectedImage.isEmpty) {
-                        // Display an error message if no card is selected
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Seleccione una tarjeta/banco antes de efectuar el pago.')),
-                        );
-                      } else {
-                        // Proceed to the Verification screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Verification(
-                                    selectedCard: selectedCard,
-                                    selectedBank: selectedBank,
-                                  )),
-                        );
-                      }
-                    },
+                    onTap: registerPaymentAndTickets,
                     child: Container(
                       decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
                         gradient: const LinearGradient(
                           colors: [
                             Color.fromARGB(255, 0, 73, 255),
@@ -383,10 +356,6 @@ class _PaymentState extends State<Payment> {
                       ),
                       width: displayWidth * 0.44,
                       height: displayWidth * 0.16,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: displayWidth * 0.1,
-                        vertical: displayWidth * 0.04,
-                      ),
                       child: const Center(
                         child: Text(
                           'Pago',
@@ -408,93 +377,96 @@ class _PaymentState extends State<Payment> {
     );
   }
 
-  String selectedImage = ''; // Store the selected image path here
+  Widget _buildPaymentOption(int value, String label) {
+    return Row(
+      children: [
+        Radio<int>(
+          value: value,
+          groupValue: selectedPaymentMethod,
+          onChanged: (int? newValue) {
+            setState(() {
+              selectedPaymentMethod = newValue!;
+              selectedCard = null;
+              selectedBank = null;
+            });
+          },
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: selectedPaymentMethod == value ? Colors.blue : Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildCreditCardSection() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Container(
-        // ... (Credit Card content)
-
-        padding: const EdgeInsets.only(left: 20),
-        clipBehavior: Clip.antiAlias,
-        decoration: const BoxDecoration(),
-        child: Row(
-          children: [
-            _SelectableImage(
-              imagePath: "assets/images/card3.png",
-              isSelected: selectedImage == "assets/images/card3.png",
-              onTap: () {
-                setState(() {
-                  selectedImage = "assets/images/card3.png";
-                });
-                selectedCard =
-                    BankCard("assets/images/card3.png"); // Store selected card
-              },
-            ),
-            _SelectableImage(
-              imagePath: "assets/images/card2.png",
-              isSelected: selectedImage == "assets/images/card2.png",
-              onTap: () {
-                setState(() {
-                  selectedImage = "assets/images/card2.png";
-                });
-                selectedCard =
-                    BankCard("assets/images/card2.png"); // Store selected card
-              },
-            ),
-            _SelectableImage(
-              imagePath: "assets/images/card1.png",
-              isSelected: selectedImage == "assets/images/card1.png",
-              onTap: () {
-                setState(() {
-                  selectedImage = "assets/images/card1.png";
-                });
-                selectedCard =
-                    BankCard("assets/images/card1.png"); // Store selected card
-              },
-            ),
-          ],
-        ),
+      child: Row(
+        children: [
+          _SelectableImage(
+            imagePath: "assets/images/card1.png",
+            isSelected: selectedImage == "assets/images/card1.png",
+            onTap: () {
+              setState(() {
+                selectedImage = "assets/images/card1.png";
+                selectedCard = BankCard("assets/images/card1.png");
+              });
+            },
+          ),
+          _SelectableImage(
+            imagePath: "assets/images/card2.png",
+            isSelected: selectedImage == "assets/images/card2.png",
+            onTap: () {
+              setState(() {
+                selectedImage = "assets/images/card2.png";
+                selectedCard = BankCard("assets/images/card2.png");
+              });
+            },
+          ),
+          _SelectableImage(
+            imagePath: "assets/images/card3.png",
+            isSelected: selectedImage == "assets/images/card3.png",
+            onTap: () {
+              setState(() {
+                selectedImage = "assets/images/card3.png";
+                selectedCard = BankCard("assets/images/card3.png");
+              });
+            },
+          ),
+        ],
       ),
     );
   }
 
-//Banking profiles
   Widget _buildBankTransferSection() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Container(
-        // ... (Credit Card content)
-
-        padding: const EdgeInsets.only(left: 20),
-        clipBehavior: Clip.antiAlias,
-        decoration: const BoxDecoration(),
-        child: Row(
-          children: [
-            _SelectableImage(
-              imagePath: "assets/images/Bank2.png",
-              isSelected: selectedImage == "assets/images/Bank2.png",
-              onTap: () {
-                setState(() {
-                  selectedImage = "assets/images/Bank2.png";
-                });
+      child: Row(
+        children: [
+          _SelectableImage(
+            imagePath: "assets/images/Bank1.png",
+            isSelected: selectedImage == "assets/images/Bank1.png",
+            onTap: () {
+              setState(() {
+                selectedImage = "assets/images/Bank1.png";
+                selectedBank = Bank("assets/images/Bank1.png");
+              });
+            },
+          ),
+          _SelectableImage(
+            imagePath: "assets/images/Bank2.png",
+            isSelected: selectedImage == "assets/images/Bank2.png",
+            onTap: () {
+              setState(() {
+                selectedImage = "assets/images/Bank2.png";
                 selectedBank = Bank("assets/images/Bank2.png");
-              },
-            ),
-            const SizedBox(width: 20),
-            _SelectableImage(
-              imagePath: "assets/images/Bank3.png",
-              isSelected: selectedImage == "assets/images/Bank3.png",
-              onTap: () {
-                setState(() {
-                  selectedImage = "assets/images/Bank3.png";
-                });
-                selectedBank = Bank("assets/images/Bank3.png");
-              },
-            ),
-          ],
-        ),
+              });
+            },
+          ),
+        ],
       ),
     );
   }
@@ -516,28 +488,18 @@ class _SelectableImage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 300,
-        decoration: ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-              color: isSelected ? Colors.blue : Colors.transparent,
-              width: 2,
-            ),
+        margin: const EdgeInsets.all(8.0),
+        width: 100,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? Colors.blue : Colors.transparent,
+            width: 2,
           ),
-          shadows: const [
-            BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 10,
-              offset: Offset(0, 1),
-              spreadRadius: 0,
-            )
-          ],
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Image.asset(
           imagePath,
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
     );

@@ -1,7 +1,15 @@
-import 'package:carretera/components/elysium_colony.dart';
+import 'package:carretera/components/place.dart';
+import 'package:carretera/core/models/booking.dart';
+import 'package:carretera/core/models/user.dart';
+import 'package:carretera/core/services/booking_service.dart';
+import 'package:carretera/core/services/payment_service.dart';
+import 'package:carretera/core/services/ticket_service.dart';
 import 'package:carretera/user_service/my_account.dart';
 import 'package:carretera/user_service/notifications_page.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+
+import '../core/services/auth_service.dart'; // Asegúrate de agregar `uuid` en pubspec.yaml
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +19,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final BookingService _bookingService = BookingService();
+  final PaymentService _paymentService = PaymentService();
+  final TicketService _ticketService = TicketService();
+  final AuthService _authService = AuthService(); // Servicio de autenticación
+  final Uuid _uuid = Uuid();
+
   final List<String> stationNames = [
     'Playas de cancun',
     'Playa de maiami',
@@ -18,20 +32,118 @@ class _HomePageState extends State<HomePage> {
     'Himalaya',
   ];
 
+  // Datos seleccionados
+  String? fromStation;
+  String? toStation;
+  int passengers = 1;
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
   String _selectedSortOption = 'Calificaciones';
-
   DateTime? selectedDate;
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<List<Booking>> _fetchBookings() async {
+    Usuario? usuario = await _authService.getAuthenticatedUser();
+    if (usuario == null) {
+      throw Exception('Usuario no autenticado');
+    }
+
+    return await _bookingService.getUserBookings(usuario.id);
+  }
+
+  Widget _buildBookingsList() {
+    return FutureBuilder<List<Booking>>(
+      future: _fetchBookings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        final bookings = snapshot.data ?? [];
+        return ListView.builder(
+          shrinkWrap: true, // Para que funcione dentro del `ListView` principal
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookings[index];
+            return ListTile(
+              title: Text('Reserva: ${booking.tourId}'),
+              subtitle: Text('Fecha: ${booking.fechaInicio.toLocal()}'),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _createBooking() async {
+    if (fromStation == null ||
+        toStation == null ||
+        selectedStartDate == null ||
+        selectedEndDate == null ||
+        passengers <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor completa todos los campos')),
+      );
+      return;
+    }
+
+    final usuario = await _authService.getAuthenticatedUser();
+    if (usuario == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario no autenticado')),
+      );
+      return;
+    }
+
+    final booking = Booking(
+      id: _uuid.v4(),
+      usuarioId: usuario.id, // ID del usuario autenticado
+      tourId: 'tour456', // Cambiar por el ID del tour seleccionado
+      fechaInicio: selectedStartDate!,
+      fechaFin: selectedEndDate!,
+      pasajeros: passengers,
+      precioTotal: 1020.00, // Calcular dinámicamente según lógica
+    );
+
+    try {
+      await _bookingService.createBooking(booking);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reserva creada exitosamente')),
+      );
+
+      // Navegar a la siguiente página
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ElysiumColony(),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear la reserva: $e')),
+      );
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2023),
       lastDate: DateTime(2160),
     );
+
     if (pickedDate != null) {
       setState(() {
-        selectedDate = pickedDate;
+        if (isStartDate) {
+          selectedStartDate = pickedDate;
+        } else {
+          selectedEndDate = pickedDate;
+        }
       });
     }
   }
@@ -150,7 +262,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
             // Search bar
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -193,24 +304,20 @@ class _HomePageState extends State<HomePage> {
                               .toLowerCase()
                               .contains(textEditingValue.text.toLowerCase()));
                         },
-                        onSelected: (value) {},
-                        fieldViewBuilder: (BuildContext context,
-                            TextEditingController fieldTextEditingController,
-                            FocusNode fieldFocusNode,
-                            VoidCallback onFieldSubmitted) {
+                        onSelected: (value) {
+                          setState(() {
+                            fromStation = value; // Actualiza correctamente
+                          });
+                        },
+                        fieldViewBuilder:
+                            (context, controller, focusNode, onFieldSubmitted) {
                           return TextField(
-                            controller: fieldTextEditingController,
-                            focusNode: fieldFocusNode,
+                            controller: controller,
+                            focusNode: focusNode,
                             decoration: InputDecoration(
                               labelText: "Desde",
-                              hintText: "Selecciona un destino",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
+                              border: OutlineInputBorder(),
                             ),
-                            onChanged: (text) {},
-                            onSubmitted: (text) {},
                           );
                         },
                       ),
@@ -226,24 +333,20 @@ class _HomePageState extends State<HomePage> {
                               .toLowerCase()
                               .contains(textEditingValue.text.toLowerCase()));
                         },
-                        onSelected: (value) {},
-                        fieldViewBuilder: (BuildContext context,
-                            TextEditingController fieldTextEditingController,
-                            FocusNode fieldFocusNode,
-                            VoidCallback onFieldSubmitted) {
+                        onSelected: (value) {
+                          setState(() {
+                            toStation = value; // Actualiza correctamente
+                          });
+                        },
+                        fieldViewBuilder:
+                            (context, controller, focusNode, onFieldSubmitted) {
                           return TextField(
-                            controller: fieldTextEditingController,
-                            focusNode: fieldFocusNode,
+                            controller: controller,
+                            focusNode: focusNode,
                             decoration: InputDecoration(
                               labelText: "Hasta",
-                              hintText: "Selecciona un destino",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
+                              border: OutlineInputBorder(),
                             ),
-                            onChanged: (text) {},
-                            onSubmitted: (text) {},
                           );
                         },
                       ),
@@ -257,18 +360,37 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              readOnly: true,
-                              onTap: () => _selectDate(context),
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                labelText: 'Selecciona una fecha',
-                                labelStyle: const TextStyle(color: Colors.blue),
+                                labelText: 'Pasajeros',
+                                hintText: "Número de pasajeros",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  passengers = int.tryParse(value) ??
+                                      1; // Valor predeterminado
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              readOnly: true,
+                              onTap: () => _selectDate(context, true),
+                              decoration: InputDecoration(
+                                labelText: 'Fecha de inicio',
+                                hintText: "Selecciona la fecha",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
                               ),
                               controller: TextEditingController(
-                                text: selectedDate != null
-                                    ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}'
+                                text: selectedStartDate != null
+                                    ? '${selectedStartDate!.year}-${selectedStartDate!.month}-${selectedStartDate!.day}'
                                     : '',
                               ),
                             ),
@@ -276,12 +398,19 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: TextFormField(
+                              readOnly: true,
+                              onTap: () => _selectDate(context, false),
                               decoration: InputDecoration(
-                                labelText: 'Pasajeros',
-                                hintText: "Numero de pasajeros",
+                                labelText: 'Fecha de salida',
+                                hintText: "Selecciona la fecha",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
+                              ),
+                              controller: TextEditingController(
+                                text: selectedEndDate != null
+                                    ? '${selectedEndDate!.year}-${selectedEndDate!.month}-${selectedEndDate!.day}'
+                                    : '',
                               ),
                             ),
                           ),
@@ -293,12 +422,8 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: GradientButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const ElysiumColony()));
-                        },
+                        onPressed:
+                            _createBooking, // Llama a la función modificada
                         height: 60.0,
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,

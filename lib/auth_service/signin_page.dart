@@ -1,13 +1,10 @@
 import 'package:carretera/auth_service/signup_page.dart';
 import 'package:carretera/components/bottom_navbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:carretera/core/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-@override
-SignInPage createState() => SignInPage();
-
 class SignInPage extends StatefulWidget {
-  SignInPage({super.key});
+  const SignInPage({super.key});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -15,30 +12,45 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   bool _isPasswordVisible = false;
+  final AuthService _authService = AuthService();
+  final idController = TextEditingController();
+  final pwController = TextEditingController();
 
-  Future<User?> Signin(
-      {required String idcontroller, required String pwcontroller}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
+  Future<void> _signin() async {
+    final email = idController.text.trim();
+    final password = pwController.text.trim();
+
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: idcontroller, password: pwcontroller);
-      user = userCredential.user;
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const NavBar()));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      // Llama al método signin del AuthService
+      final user = await _authService.signin(email, password);
+      if (user != null) {
+        // Redirige a la pantalla principal si el inicio de sesión es exitoso
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavBar()),
+        );
       }
+    } catch (e) {
+      // Muestra un mensaje de error si falla el inicio de sesión
+      _showErrorDialog(e.toString());
     }
-    return user;
   }
 
-  final idcontroller = TextEditingController();
-
-  final pwcontroller = TextEditingController();
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,74 +80,42 @@ class _SignInPageState extends State<SignInPage> {
         width: displayWidth,
         child: ListView(
           children: [
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             const Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Sign In',
                 style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40,
-                    fontWeight: FontWeight.w900),
+                  color: Colors.black,
+                  fontSize: 40,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            const FittedBox(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 16, right: 8),
-                    child: Text('Empieza tu viaje con',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w300)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 16),
-                    child: Text('Travago',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
-                controller: idcontroller,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: 'CI ó E-mail',
-                    hintStyle:
-                        const TextStyle(color: Colors.grey, fontSize: 20)),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: TextField(
-                controller: pwcontroller,
-                obscureText:
-                    !_isPasswordVisible, // Obfuscate the password when not visible
+                controller: idController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'CI ó E-mail',
+                  hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: pwController,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   hintText: 'Contraseña',
                   hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
                   suffixIcon: IconButton(
@@ -154,11 +134,9 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -173,16 +151,14 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 child: ElevatedButton(
                   onPressed: () async {
-                    await Signin(
-                      idcontroller: idcontroller.text,
-                      pwcontroller: pwcontroller.text,
-                    );
+                    await _signin(); // Llamada correcta a la función _signin
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: const Size(500, 64),
-                    elevation: 0, // Remove button shadow
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25)),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                     backgroundColor: Colors.transparent,
                   ),
                   child: const Text(
@@ -192,9 +168,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -213,10 +187,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'or',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  child: Text('or', style: TextStyle(fontSize: 18)),
                 ),
                 Container(
                   width: 10,
@@ -234,63 +205,28 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ],
             ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('Sign Up with', style: TextStyle(fontSize: 18))],
-            ),
             const SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(16),
-                      color: const Color.fromRGBO(255, 255, 255, 1),
-                    ),
-                    child: Image.asset(
-                      'assets/images/Google.png',
-                      height: 40,
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'No tienes una cuenta?',
+                  style: TextStyle(fontSize: 18),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpPage()),
+                    );
+                  },
+                  child: const Text(
+                    ' Sign Up',
+                    style: TextStyle(fontSize: 18, color: Colors.blue),
                   ),
-                 
-                ],
-              ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'No tienes una cuenta?',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      //SIGN UP LINK
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpPage()));
-                    },
-                    child: const Text(
-                      ' Sign Up',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: displayWidth * .2,
-            )
           ],
         ),
       ),
