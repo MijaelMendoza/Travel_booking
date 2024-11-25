@@ -24,14 +24,14 @@ class MyHotel extends StatelessWidget {
           const SizedBox(height: 16),
           _buildHotelCard(
             context,
-            name: 'Ocean Breeze',
+            name: 'Hotel Breeze',
             imagePath: 'assets/images/location1.png',
             rating: '4/5',
           ),
           const SizedBox(height: 16),
           _buildHotelCard(
             context,
-            name: 'Mountain Escape',
+            name: 'Hotel Mountain Escape',
             imagePath: 'assets/images/location2.png',
             rating: '5/5',
           ),
