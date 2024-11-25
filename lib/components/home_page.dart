@@ -5,6 +5,7 @@ import 'package:carretera/core/services/booking_service.dart';
 import 'package:carretera/core/services/payment_service.dart';
 import 'package:carretera/core/services/ticket_service.dart';
 import 'package:carretera/user_service/my_account.dart';
+import 'package:carretera/user_service/my_hotel.dart';
 import 'package:carretera/user_service/notifications_page.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -628,6 +629,137 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Dentro del método build de HomePage
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: displayWidth * 0.05),
+              child: Container(
+                height: 300,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(50, 50, 50, 50),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: displayWidth * 0.05,
+                        vertical: displayWidth * 0.025,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Los Mejores Hoteles',
+                            style: TextStyle(
+                              fontSize: displayWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MyHotel(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Más",
+                              style: TextStyle(fontSize: displayWidth * 0.04),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: displayWidth * 0.05),
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(
+                              255, 0, 0, 136), // Fondo azul
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            // Imagen del hotel
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                bottomLeft: Radius.circular(16),
+                              ),
+                              child: Image.asset(
+                                'assets/images/location3.png',
+                                width: displayWidth * 0.4,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            // Información del hotel
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Hotel Paradise',
+                                      style: TextStyle(
+                                        fontSize: displayWidth * 0.05,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors
+                                            .white, // Color del texto blanco
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      '4/5',
+                                      style: TextStyle(
+                                        fontSize: displayWidth * 0.04,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Flecha de navegación
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                size: displayWidth * 0.05,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
