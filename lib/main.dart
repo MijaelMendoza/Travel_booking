@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
         splash: Image.asset(
-          'assets/images/nebulalogo.jpg',
+          'assets/nebulalogo.jpg',
         ),
         nextScreen:
             AuthWrapper(), // Cambia la siguiente pantalla al AuthWrapper
