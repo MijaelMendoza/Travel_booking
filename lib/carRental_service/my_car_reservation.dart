@@ -15,7 +15,26 @@ class MyCarReservationsPage extends StatelessWidget {
         .where('userId', isEqualTo: user.uid)
         .get();
 
-    return snapshot.docs.map((doc) => doc.data()).toList();
+    final List<Map<String, dynamic>> rentals = [];
+
+    for (var rentalDoc in snapshot.docs) {
+      final rentalData = rentalDoc.data();
+      final carSnapshot = await FirebaseFirestore.instance
+          .collection('cars')
+          .doc(rentalData['carId'])
+          .get();
+
+      if (carSnapshot.exists) {
+        final carData = carSnapshot.data();
+        rentalData['carModel'] = carData?['model'] ?? 'Desconocido';
+        rentalData['carBrand'] = carData?['brand'] ?? 'Desconocido';
+        rentalData['carImages'] = carData?['imageUrls'] ?? [];
+      }
+
+      rentals.add(rentalData);
+    }
+
+    return rentals;
   }
 
   @override
@@ -43,10 +62,30 @@ class MyCarReservationsPage extends StatelessWidget {
             itemCount: rentals.length,
             itemBuilder: (context, index) {
               final rental = rentals[index];
+              String? imageUrl = rental['carImages'].isNotEmpty
+                  ? rental['carImages'][0]
+                  : 'assets/icons/auto.jpg';
+
               return Card(
                 child: ListTile(
-                  title: Text("Modelo: ${rental['model'] ?? 'Desconocido'}"),
-                  subtitle: Text("Precio Total: \$${rental['totalAmount'] ?? 0.0}"),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.network(
+                      imageUrl!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: Text("Modelo: ${rental['carModel'] ?? 'Desconocido'}"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Marca: ${rental['carBrand'] ?? 'Desconocido'}"),
+                      Text("Precio Total: \$${rental['totalAmount'] ?? 0.0}"),
+                      Text("Fechas: ${rental['startDate']} - ${rental['endDate']}"),
+                    ],
+                  ),
                 ),
               );
             },
