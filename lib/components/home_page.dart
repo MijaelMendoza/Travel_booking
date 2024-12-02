@@ -1,7 +1,10 @@
+import 'package:carretera/airplane_service/flight_list_page.dart';
 import 'package:carretera/carRental_service/car_list_client.dart';
 import 'package:carretera/components/place.dart';
+import 'package:carretera/core/models/aerlineas.dart';
 import 'package:carretera/core/models/booking.dart';
 import 'package:carretera/core/models/user.dart';
+import 'package:carretera/core/services/aeroline_service.dart';
 import 'package:carretera/core/services/booking_service.dart';
 import 'package:carretera/core/services/payment_service.dart';
 import 'package:carretera/core/services/ticket_service.dart';
@@ -27,6 +30,29 @@ class _HomePageState extends State<HomePage> {
   final TicketService _ticketService = TicketService();
   final AuthService _authService = AuthService(); // Servicio de autenticación
   final Uuid _uuid = Uuid();
+  final AirlineService _airlineService = AirlineService();
+  List<Airline> _flights = [];
+
+  String _selectedSortOption = 'Calificaciones';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFlights();
+  }
+
+  Future<void> _loadFlights() async {
+    try {
+      final flights = await _airlineService.getAllAirlines();
+      setState(() {
+        _flights = flights;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar los vuelos: $e')),
+      );
+    }
+  }
 
   final List<String> stationNames = [
     'Playas de cancun',
@@ -41,7 +67,6 @@ class _HomePageState extends State<HomePage> {
   int passengers = 1;
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
-  String _selectedSortOption = 'Calificaciones';
   DateTime? selectedDate;
 
   Future<List<Booking>> _fetchBookings() async {
@@ -532,7 +557,7 @@ class _HomePageState extends State<HomePage> {
 
             // The best tours container
             Padding(
-              padding: EdgeInsets.all(displayWidth * .05),
+              padding: EdgeInsets.all(displayWidth * 0.05),
               child: SizedBox(
                 height: displayWidth * 1.4,
                 width: double.infinity,
@@ -540,40 +565,47 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: displayWidth * .025),
+                          EdgeInsets.symmetric(vertical: displayWidth * 0.025),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(top: displayWidth * .01),
+                            padding: EdgeInsets.only(top: displayWidth * 0.01),
                             child: Text(
-                              'Los Mejores Tours',
+                              'Métodos de viaje',
                               style: TextStyle(
-                                fontSize: displayWidth * .05,
+                                fontSize: displayWidth * 0.05,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: displayWidth * .01),
+                            padding: EdgeInsets.only(top: displayWidth * 0.01),
                             child: TextButton(
-                              onPressed: () {},
-                              style: ButtonStyle(),
-                              child: Text("Mas"),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FlightListPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text("Más"),
                             ),
                           )
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: displayWidth * .01),
+                      padding: EdgeInsets.only(top: displayWidth * 0.01),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Ordenar por',
                             style: TextStyle(
-                              fontSize: displayWidth * .04,
+                              fontSize: displayWidth * 0.04,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -600,43 +632,30 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LongButton(
-                            imageAsset: 'assets/images/travel1.png',
-                            description: 'Descripcion',
-                            title: 'Avion 404',
-                            backgroundColor: Color.fromARGB(255, 9, 0, 136),
+                      child: ListView.builder(
+                          itemCount: _flights.length > 4 ? 4 : _flights.length, // Máximo 3 elementos,
+                        itemBuilder: (context, index) {
+                          final flight = _flights[index];
+                          return LongButton(
+                            imageAsset:   'assets/icons/airplane.jpg', 
+                            description: 'Destino: ${flight.destination}\n'
+                                'Precio: ${flight.price} EUR\n'
+                                'Salida: ${flight.departureDate.toLocal()}',
+                            title: flight.airlineBrand,
+                            backgroundColor:
+                                const Color.fromARGB(255, 9, 0, 136),
                             onTap: () {
-                              // Handle button tap action
+                              // Acción al tocar el botón del vuelo (si es necesario)
                             },
-                          ),
-                          LongButton(
-                            imageAsset: 'assets/images/travel2.png',
-                            description: 'Descripcion',
-                            title: 'Avion Z11',
-                            backgroundColor: Color.fromARGB(255, 255, 42, 42),
-                            onTap: () {
-                              // Handle button tap action
-                            },
-                          ),
-                          LongButton(
-                            imageAsset: 'assets/images/travel3.png',
-                            description: 'Descripcion',
-                            title: 'Avion YX1',
-                            backgroundColor: Color.fromARGB(255, 137, 161, 138),
-                            onTap: () {
-                              // Handle button tap action
-                            },
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+
             // Dentro del método build de HomePage
             Padding(
               padding: EdgeInsets.symmetric(vertical: displayWidth * 0.05),

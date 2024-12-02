@@ -115,8 +115,10 @@ class _CarListScreenClientState extends State<CarListScreenClient> {
                         itemBuilder: (context, index) {
                           var car = filteredCars[index];
                           List<dynamic> imageUrls = car['image_urls'] ?? [];
-                          String? imageUrl = imageUrls.isNotEmpty ? imageUrls[0] : null;
-
+                          String? imageUrl = imageUrls.isNotEmpty ? imageUrls[0] :     ' assets/icons/auto.jpg';
+if(imageUrl== "https://via.placeholder.com/150"){
+                            imageUrl=  ' assets/icons/auto.jpg';
+                          }
                           return Card(
                             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             elevation: 4,
