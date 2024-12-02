@@ -545,7 +545,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: EdgeInsets.only(top: displayWidth * .01),
                             child: Text(
-                              'Los Mejores Tours',
+                              'Métodos de viaje',
                               style: TextStyle(
                                 fontSize: displayWidth * .05,
                                 fontWeight: FontWeight.bold,
