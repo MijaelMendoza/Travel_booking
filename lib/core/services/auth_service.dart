@@ -41,6 +41,7 @@ class AuthService {
         email: email,
         nivel: "cliente",
         nombre: nombre,
+        viajeroFrecuente: false,
         fechaCreacion: DateTime.now(),
       );
 

@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carretera/core/models/user.dart';
 import 'package:carretera/core/services/auth_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/booking.dart';
 
 class BookingService {
@@ -9,12 +9,58 @@ class BookingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService(); // Inicialización correcta
 
- 
+  // Función para contar las reservas de un usuario en el mes actual
+  Future<int> _countUserBookingsInCurrentMonth(String userId) async {
+    try {
+      final currentDate = DateTime.now();
+      final startOfMonth = DateTime(currentDate.year, currentDate.month, 1);
+      final endOfMonth = DateTime(currentDate.year, currentDate.month + 1, 0);
+
+      // Contar las reservas del usuario en el mes actual
+      final querySnapshot = await _bookings
+          .where('usuarioId', isEqualTo: userId)
+          .where('fechaInicio', isGreaterThanOrEqualTo: startOfMonth)
+          .where('fechaFin', isLessThanOrEqualTo: endOfMonth)
+          .get();
+
+      return querySnapshot.docs.length;
+    } catch (e) {
+      throw Exception('Error al contar las reservas: $e');
+    }
+  }
+
+  // Función para actualizar el campo "viajeroFrecuente" del usuario
+  Future<void> _updateFrequentTravelerStatus(String userId) async {
+    try {
+      // Verificar si el documento del usuario existe
+      DocumentSnapshot usuarioDoc =
+          await _firestore.collection('usuarios').doc(userId).get();
+
+      // Si el documento no existe, crearlo con los valores iniciales
+      if (!usuarioDoc.exists) {
+        await _firestore.collection('usuarios').doc(userId).set({
+          'viajeroFrecuente': false, // O el valor inicial que desees
+        });
+      }
+
+      // Ahora actualizamos el estado de viajero frecuente
+      await _firestore.collection('usuarios').doc(userId).update({
+        'viajeroFrecuente': true, // O el valor correspondiente
+      });
+    } catch (e) {
+      print('Error al actualizar el estado de viajero frecuente: $e');
+      throw Exception('Error al actualizar el estado de viajero frecuente: $e');
+    }
+  }
+
   Future<void> createBooking(Booking booking) async {
     try {
       print('Guardando reserva con ID: ${booking.id}');
       await _bookings.doc(booking.id).set(booking.toMap());
       print('Reserva guardada exitosamente.');
+
+      // Actualizar el estado de viajero frecuente
+      await _updateFrequentTravelerStatus(booking.usuarioId);
     } catch (e) {
       print('Error al guardar la reserva: $e');
       throw Exception('Error al guardar la reserva: $e');

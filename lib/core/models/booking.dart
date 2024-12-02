@@ -15,7 +15,7 @@ class Booking {
     required this.usuarioId,
     required this.tourId,
     required this.fechaInicio,
-    required this.fechaFin,
+    required this.fechaFin, 
     required this.pasajeros,
     required this.precioTotal,
     this.estado = 'pendiente',
