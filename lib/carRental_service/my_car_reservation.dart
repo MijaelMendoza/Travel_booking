@@ -28,7 +28,7 @@ class MyCarReservationsPage extends StatelessWidget {
         final carData = carSnapshot.data();
         rentalData['carModel'] = carData?['model'] ?? 'Desconocido';
         rentalData['carBrand'] = carData?['brand'] ?? 'Desconocido';
-        rentalData['carImages'] = carData?['imageUrls'] ?? [];
+        rentalData['carImages'] = carData?['image_urls'] ?? [];
       }
 
       rentals.add(rentalData);
