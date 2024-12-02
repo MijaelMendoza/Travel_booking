@@ -28,7 +28,7 @@ class CarController {
           brand: carData["make"] ?? "Marca desconocida",
           price: (carData["price"] ?? 20000).toDouble(),
           imageUrls: [
-            "https://via.placeholder.com/150" // URL genérica si no hay imágenes
+            "" // URL genérica si no hay imágenes
           ],
           description: carData["fuel_efficiency"] != null
               ? "Consumo de combustible: ${carData['fuel_efficiency']} km/l"

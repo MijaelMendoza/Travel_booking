@@ -1,5 +1,6 @@
 // lib/core/services/airline_service.dart
 import 'package:carretera/core/models/aerlineas.dart';
+import 'package:carretera/core/models/flight_reservation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AirlineService {
@@ -14,6 +15,22 @@ class AirlineService {
       throw Exception('Error al guardar la aerolínea: $e');
     }
   }
+// lib/core/services/airline_service.dart
+
+  
+  final CollectionReference _reservations =
+      FirebaseFirestore.instance.collection('flight_reservations');
+
+  // Método para guardar una reserva
+  Future<void> createFlightReservation(FlightReservation reservation) async {
+    try {
+      await _reservations.doc(reservation.id).set(reservation.toMap());
+      print('Reserva guardada exitosamente.');
+    } catch (e) {
+      throw Exception('Error al guardar la reserva: $e');
+    }
+  }
+
 
   // Actualizar información de una aerolínea
   Future<void> updateAirline(String airlineId, Map<String, dynamic> updates) async {

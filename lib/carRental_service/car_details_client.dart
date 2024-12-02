@@ -1,8 +1,11 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carretera/carRental_service/rent_car_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'rent_car_screen.dart'; // Importa la pantalla de renta
+import 'package:carretera/carRental_service/car_details.dart';
 
+// CarDetailScreenClient
 class CarDetailScreenClient extends StatefulWidget {
   final String carId;
   CarDetailScreenClient({required this.carId});
@@ -16,6 +19,7 @@ class _CarDetailScreenClientState extends State<CarDetailScreenClient> {
   String price = '';
   String description = '';
   List<String> imageUrls = [];
+  final String defaultImageUrl = 'assets/icons/auto.jpg'; // Imagen predeterminada
 
   @override
   void initState() {
@@ -30,7 +34,7 @@ class _CarDetailScreenClientState extends State<CarDetailScreenClient> {
       var carData = doc.data() as Map<String, dynamic>;
 
       if (carData.containsKey('image_urls') && carData['image_urls'] is List) {
-        imageUrls = List<String>.from(carData['image_urls']);
+        imageUrls = List<String>.from(carData['image_urls']) ;
       }
 
       price = carData['price'].toString();
@@ -74,34 +78,34 @@ class _CarDetailScreenClientState extends State<CarDetailScreenClient> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Carrusel de imágenes
-            imageUrls.isNotEmpty
-                ? CarouselSlider(
-                    items: imageUrls
-                        .map((url) => ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network(
+            CarouselSlider(
+              items: (imageUrls.isNotEmpty ? imageUrls : [defaultImageUrl])
+                  .map((url) => ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: url.startsWith('http')
+                            ? Image.network(
+                                url,
+                                width: MediaQuery.of(context).size.width,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
                                 url,
                                 width: MediaQuery.of(context).size.width,
                                 height: 200,
                                 fit: BoxFit.cover,
                               ),
-                            ))
-                        .toList(),
-                    options: CarouselOptions(
-                      height: 200,
-                      enlargeCenterPage: true,
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 3),
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 0.9,
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      'No hay imágenes disponibles',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ),
+                      ))
+                  .toList(),
+              options: CarouselOptions(
+                height: 200,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 3),
+                aspectRatio: 16 / 9,
+                viewportFraction: 0.9,
+              ),
+            ),
             SizedBox(height: 20),
 
             // Detalles del auto

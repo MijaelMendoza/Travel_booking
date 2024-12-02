@@ -40,7 +40,40 @@ class MyBookingsPage extends StatelessWidget {
             );
           }
 
-          final bookings = snapshot.data!.docs;
+          // Filtrar reservas con fechas futuras o actuales
+          final today = DateTime.now();
+          final bookings = snapshot.data!.docs.where((doc) {
+            final timestamp = doc['timestamp'] as Timestamp?;
+            if (timestamp == null) return false;
+
+            // Convertir a DateTime y comparar solo las fechas
+            final bookingDate = timestamp.toDate();
+            final bookingDateOnly = DateTime(
+              bookingDate.year,
+              bookingDate.month,
+              bookingDate.day,
+            );
+
+            final todayDateOnly = DateTime(
+              today.year,
+              today.month,
+              today.day,
+            );
+
+            return bookingDateOnly.isAtSameMomentAs(todayDateOnly) || bookingDateOnly.isAfter(todayDateOnly);
+          }).toList();
+
+          if (bookings.isEmpty) {
+            return const Center(
+              child: Text(
+                "No tienes reservas futuras o actuales.",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                ),
+              ),
+            );
+          }
 
           return ListView.builder(
             itemCount: bookings.length,

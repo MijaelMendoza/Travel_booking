@@ -1,4 +1,5 @@
 import 'package:carretera/core/models/aerlineas.dart';
+import 'package:carretera/core/models/flight_reservation.dart';
 import 'package:carretera/core/services/aeroline_service.dart';
 import 'package:flutter/material.dart';
 import 'package:carretera/core/services/auth_service.dart';
@@ -80,7 +81,35 @@ class _FlightListPageState extends State<FlightListPage> {
       );
     }
   }
+void _reserveFlight(Airline flight) async {
+  try {
+    final user = await _authService.getAuthenticatedUser();
 
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicia sesión para reservar un vuelo.')),
+      );
+      return;
+    }
+
+    final reservation = FlightReservation(
+      id: UniqueKey().toString(),
+      userId: user.id,
+      flightId: flight.id,
+      reservationDate: DateTime.now(),
+    );
+
+    await _airlineService.createFlightReservation(reservation);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Vuelo reservado exitosamente.')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al reservar el vuelo: $e')),
+    );
+  }
+}
   Future<void> _showFlightDialog({Airline? flight}) async {
     final TextEditingController brandController =
         TextEditingController(text: flight?.airlineBrand ?? '');
@@ -233,99 +262,107 @@ class _FlightListPageState extends State<FlightListPage> {
     );
   }
 
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lista de Vuelos'),
-        backgroundColor: Colors.blueGrey,
-        actions: [
-          if (_isAdmin)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => _showFlightDialog(),
-            ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Campo de búsqueda
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                labelText: 'Buscar por destino o marca',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
-              ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Lista de Vuelos'),
+      backgroundColor: Colors.blueGrey,
+      actions: [
+        if (_isAdmin)
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => _showFlightDialog(),
+          ),
+      ],
+    ),
+    body: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(
+              labelText: 'Buscar por destino o marca',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.search),
             ),
           ),
-          Expanded(
-            child: _filteredFlights.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No se encontraron vuelos.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _filteredFlights.length,
-                    itemBuilder: (context, index) {
-                      final flight = _filteredFlights[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              'assets/icons/airplane.jpg', // Imagen predeterminada
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          title: Text(
-                            flight.airlineBrand,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '${flight.destination} - \$${flight.price.toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                          ),
-                          trailing: _isAdmin
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.edit),
-                                      onPressed: () => _showFlightDialog(flight: flight),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () => _deleteFlight(flight.id),
-                                    ),
-                                  ],
-                                )
-                              : null,
-                        ),
-                      );
-                    },
+        ),
+        Expanded(
+          child: _filteredFlights.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No se encontraron vuelos.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
+                )
+              : ListView.builder(
+                  itemCount: _filteredFlights.length,
+                  itemBuilder: (context, index) {
+                    final flight = _filteredFlights[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            'assets/icons/airplane.jpg',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(
+                          flight.airlineBrand,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '${flight.destination} - \$${flight.price.toStringAsFixed(2)}',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_isAdmin)
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () =>
+                                    _showFlightDialog(flight: flight),
+                              ),
+                            if (_isAdmin)
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () => _deleteFlight(flight.id),
+                              ),
+                           
+                              ElevatedButton(
+                                onPressed: () => _reserveFlight(flight),
+                                child: const Text('Reservar'),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   void dispose() {
