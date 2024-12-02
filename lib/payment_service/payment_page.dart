@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carretera/components/bottom_navbar.dart';
 import 'package:carretera/payment_service/payment_verification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // Importa BankCard y Bank desde su archivo original
@@ -26,6 +27,28 @@ class _PaymentState extends State<Payment> {
 
   String selectedImage = ''; // Imagen seleccionada para tarjeta o banco
 
+  bool isFrequentTraveler = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFrequentTravelerStatus();
+  }
+
+  Future<void> _checkFrequentTravelerStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Verifica en Firestore si el usuario es viajero frecuente
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
+      setState(() {
+        isFrequentTraveler = userDoc['viajeroFrecuente'] ?? false;
+      });
+    }
+  }
+
   Future<void> registerPaymentAndTickets() async {
     if (selectedCard == null && selectedBank == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -36,11 +59,13 @@ class _PaymentState extends State<Payment> {
       return;
     }
 
-    String paymentMethod = selectedCard != null ? "Tarjeta de Crédito" : "Transferencia Bancaria";
+    String paymentMethod =
+        selectedCard != null ? "Tarjeta de Crédito" : "Transferencia Bancaria";
 
     try {
       // Registrar el pago en Firebase
-      CollectionReference payments = FirebaseFirestore.instance.collection('payments');
+      CollectionReference payments =
+          FirebaseFirestore.instance.collection('payments');
       DocumentReference paymentDoc = await payments.add({
         'method': paymentMethod,
         'totalAmount': totalAmount,
@@ -51,7 +76,8 @@ class _PaymentState extends State<Payment> {
       });
 
       // Registrar los tickets asociados al pago
-      CollectionReference tickets = FirebaseFirestore.instance.collection('tickets');
+      CollectionReference tickets =
+          FirebaseFirestore.instance.collection('tickets');
       for (int i = 1; i <= ticketCount; i++) {
         await tickets.add({
           'paymentId': paymentDoc.id,
@@ -64,7 +90,8 @@ class _PaymentState extends State<Payment> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Pago y tickets registrados exitosamente en la base de datos.'),
+          content: Text(
+              'Pago y tickets registrados exitosamente en la base de datos.'),
         ),
       );
 
@@ -91,6 +118,10 @@ class _PaymentState extends State<Payment> {
   @override
   Widget build(BuildContext context) {
     double displayWidth = MediaQuery.of(context).size.width;
+    double discount = isFrequentTraveler
+        ? 0.1
+        : 0; // 10% de descuento si es viajero frecuente
+    double discountedTotal = totalAmount - (totalAmount * discount);
 
     return Scaffold(
       appBar: AppBar(
@@ -106,7 +137,8 @@ class _PaymentState extends State<Payment> {
           ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 30.0),
                 child: Container(
                   width: displayWidth,
                   decoration: ShapeDecoration(
@@ -131,7 +163,8 @@ class _PaymentState extends State<Payment> {
                         fit: BoxFit.cover,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 30.0),
                         child: SizedBox(
                           width: displayWidth,
                           child: Column(
@@ -151,12 +184,15 @@ class _PaymentState extends State<Payment> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: const [
                                             Text(
                                               'Para un ticket',
@@ -192,8 +228,10 @@ class _PaymentState extends State<Payment> {
                                         const SizedBox(width: 159),
                                         Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
                                           children: [
                                             Text(
                                               '\$ ${ticketPrice.toStringAsFixed(2)}',
@@ -230,7 +268,8 @@ class _PaymentState extends State<Payment> {
                                     ),
                                     const SizedBox(height: 16),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text(
                                           'Total',
@@ -242,7 +281,7 @@ class _PaymentState extends State<Payment> {
                                           ),
                                         ),
                                         Text(
-                                          '\$ ${totalAmount.toStringAsFixed(2)}',
+                                          '\$ ${discountedTotal.toStringAsFixed(2)}',
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontSize: 16,
@@ -252,6 +291,20 @@ class _PaymentState extends State<Payment> {
                                         ),
                                       ],
                                     ),
+                                    if (isFrequentTraveler)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          '¡Descuento aplicado! 10% de descuento por ser viajero frecuente.',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -264,7 +317,8 @@ class _PaymentState extends State<Payment> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -328,7 +382,8 @@ class _PaymentState extends State<Payment> {
                       minimumSize: Size(displayWidth * .44, displayWidth * .16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50.0),
-                        side: const BorderSide(color: Color.fromARGB(255, 0, 73, 255)),
+                        side: const BorderSide(
+                            color: Color.fromARGB(255, 0, 73, 255)),
                       ),
                     ),
                     child: const Text(

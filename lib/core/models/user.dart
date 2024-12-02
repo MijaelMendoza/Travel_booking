@@ -6,6 +6,7 @@ class Usuario {
   final String nivel;
   final String nombre;
   final DateTime fechaCreacion;
+  final bool viajeroFrecuente; // Nuevo campo agregado
 
   Usuario({
     required this.id,
@@ -13,6 +14,7 @@ class Usuario {
     required this.nivel,
     required this.nombre,
     required this.fechaCreacion,
+    required this.viajeroFrecuente, // Nuevo parámetro en el constructor
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json, {required String id}) {
@@ -27,6 +29,7 @@ class Usuario {
       nombre: json['nombre'],
       nivel: json['nivel'],
       fechaCreacion: fechaCreacion,
+      viajeroFrecuente: json['viajeroFrecuente'] ?? false, // Valor por defecto a false
     );
   }
 
@@ -37,6 +40,7 @@ class Usuario {
       'nombre': nombre,
       'fechaCreacion': fechaCreacion,
       'id': id, // Asegúrate de incluir el UID aquí
+      'viajeroFrecuente': viajeroFrecuente, // Agrega este campo al JSON
     };
   }
 }
