@@ -16,7 +16,7 @@ class Usuario {
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json, {required String id}) {
-   final fechaCreacionRaw = json['fechaCreacion'];
+    final fechaCreacionRaw = json['fechaCreacion'];
     final fechaCreacion = fechaCreacionRaw is Timestamp
         ? fechaCreacionRaw.toDate() // Convierte Timestamp a DateTime
         : DateTime.parse(fechaCreacionRaw); // Maneja String como DateTime
@@ -36,6 +36,7 @@ class Usuario {
       'nivel': nivel,
       'nombre': nombre,
       'fechaCreacion': fechaCreacion,
+      'id': id, // Asegúrate de incluir el UID aquí
     };
   }
 }
