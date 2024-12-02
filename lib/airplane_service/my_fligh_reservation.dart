@@ -1,6 +1,8 @@
+import 'package:carretera/core/services/aeroline_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:carretera/core/models/aerlineas.dart';
 
 class MyFlightReservationsPage extends StatelessWidget {
   const MyFlightReservationsPage({Key? key}) : super(key: key);
@@ -16,6 +18,11 @@ class MyFlightReservationsPage extends StatelessWidget {
         .get();
 
     return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
+  Future<Airline?> _fetchFlightDetails(String flightId) async {
+    final airlineService = AirlineService();
+    return await airlineService.getAirlineById(flightId);
   }
 
   @override
@@ -43,11 +50,47 @@ class MyFlightReservationsPage extends StatelessWidget {
             itemCount: reservations.length,
             itemBuilder: (context, index) {
               final reservation = reservations[index];
-              return Card(
-                child: ListTile(
-                  title: Text("Destino: ${reservation['destination'] ?? 'Desconocido'}"),
-                  subtitle: Text("Precio: \$${reservation['price'] ?? 0.0}"),
-                ),
+              final flightId = reservation['flightId'] ?? 'ID desconocido';
+              final reservationDate =
+                  DateTime.parse(reservation['reservationDate'] ?? DateTime.now().toString());
+
+              return FutureBuilder<Airline?>(
+                future: _fetchFlightDetails(flightId),
+                builder: (context, flightSnapshot) {
+                  if (flightSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!flightSnapshot.hasData) {
+                    return Card(
+                      child: ListTile(
+                        title: Text("Vuelo no encontrado"),
+                        subtitle: Text("ID del vuelo: $flightId"),
+                      ),
+                    );
+                  }
+
+                  final flight = flightSnapshot.data!;
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ListTile(
+                      title: Text("Destino: ${flight.destination}"),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Marca: ${flight.airlineBrand}"),
+                          Text("Precio: \$${flight.price.toStringAsFixed(2)}"),
+                          Text(
+                              "Fecha de reserva: ${reservationDate.day}/${reservationDate.month}/${reservationDate.year}"),
+                          Text(
+                              "Salida: ${flight.departureDate.day}/${flight.departureDate.month}/${flight.departureDate.year}"),
+                          Text(
+                              "Regreso: ${flight.returnDate.day}/${flight.returnDate.month}/${flight.returnDate.year}"),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
