@@ -48,6 +48,7 @@ dependencies:
   image: ^4.3.0
   mime: ^2.0.0
   carousel_slider: ^5.0.0
+  firebase_storage: ^12.3.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

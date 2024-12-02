@@ -1,68 +1,70 @@
-import 'package:carretera/core/models/hotel_booking.dart';
-import 'package:carretera/core/models/user.dart';
-import 'package:carretera/core/services/auth_service.dart';
+import 'package:carretera/core/models/hotel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HotelService {
   final CollectionReference _hotels =
-      FirebaseFirestore.instance.collection('hotel_bookings');
+      FirebaseFirestore.instance.collection('hotels');
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final AuthService _authService = AuthService();
 
-  // Crear una reserva de hotel
-  Future<void> createHotelBooking(HotelBooking booking) async {
+  // Crear un hotel
+  Future<void> createHotel(Hotel hotel) async {
     try {
-      print('Guardando reserva de hotel con ID: ${booking.id}');
-      await _hotels.doc(booking.id).set(booking.toMap());
-      print('Reserva de hotel guardada exitosamente.');
+      print('Guardando hotel con ID: ${hotel.id}');
+      await _hotels.doc(hotel.id).set(hotel.toMap());
+      print('Hotel guardado exitosamente.');
     } catch (e) {
-      print('Error al guardar la reserva de hotel: $e');
-      throw Exception('Error al guardar la reserva de hotel: $e');
+      print('Error al guardar el hotel: $e');
+      throw Exception('Error al guardar el hotel: $e');
     }
   }
 
-  // Obtener todas las reservas de un usuario
-  Future<List<HotelBooking>> getUserHotelBookings(String userId) async {
+  // Obtener todos los hoteles
+  Future<List<Hotel>> getAllHotels() async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection('hotel_bookings')
-          .where('userId', isEqualTo: userId)
-          .get();
-
+      QuerySnapshot snapshot = await _hotels.get();
       return snapshot.docs.map((doc) {
-        return HotelBooking.fromMap(doc.data() as Map<String, dynamic>);
+        return Hotel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     } catch (e) {
-      throw Exception('Error al obtener las reservas de hotel: $e');
+      throw Exception('Error al obtener los hoteles: $e');
     }
   }
 
-  // Obtener reservas del usuario autenticado
-  Future<List<HotelBooking>> fetchAuthenticatedUserBookings() async {
-    Usuario? user = await _authService.getAuthenticatedUser();
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-
-    return await getUserHotelBookings(user.id);
-  }
-
-  // Actualizar una reserva
-  Future<void> updateHotelBooking(
-      String bookingId, Map<String, dynamic> updates) async {
+  // Obtener un hotel por su ID
+  Future<Hotel?> getHotelById(String hotelId) async {
     try {
-      await _hotels.doc(bookingId).update(updates);
+      DocumentSnapshot doc = await _hotels.doc(hotelId).get();
+      if (doc.exists) {
+        return Hotel.fromMap(doc.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
     } catch (e) {
-      throw Exception('Error al actualizar la reserva de hotel: $e');
+      throw Exception('Error al obtener el hotel: $e');
     }
   }
 
-  // Eliminar una reserva
-  Future<void> deleteHotelBooking(String bookingId) async {
+  // Actualizar un hotel
+  Future<void> updateHotel(String hotelId, Map<String, dynamic> updates) async {
     try {
-      await _hotels.doc(bookingId).delete();
+      print('Actualizando hotel con ID: $hotelId');
+      await _hotels.doc(hotelId).update(updates);
+      print('Hotel actualizado exitosamente.');
     } catch (e) {
-      throw Exception('Error al eliminar la reserva de hotel: $e');
+      print('Error al actualizar el hotel: $e');
+      throw Exception('Error al actualizar el hotel: $e');
+    }
+  }
+
+  // Eliminar un hotel
+  Future<void> deleteHotel(String hotelId) async {
+    try {
+      print('Eliminando hotel con ID: $hotelId');
+      await _hotels.doc(hotelId).delete();
+      print('Hotel eliminado exitosamente.');
+    } catch (e) {
+      print('Error al eliminar el hotel: $e');
+      throw Exception('Error al eliminar el hotel: $e');
     }
   }
 }
