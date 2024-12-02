@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MyBookingsPage extends StatelessWidget {
   const MyBookingsPage({super.key});
@@ -105,6 +108,86 @@ class MyBookingsPage extends StatelessWidget {
                           'Fecha: ${timestamp.toDate()}',
                         ),
                     ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () {
+                      // Generar el texto para compartir
+                      final shareContent = '''
+Reserva #${index + 1}
+Método de Pago: $method
+Total: \$${totalAmount.toStringAsFixed(2)}
+Número de Tickets: $ticketCount
+${timestamp != null ? 'Fecha: ${timestamp.toDate()}' : ''}
+''';
+
+                      // Mostrar opciones para compartir en Facebook o Instagram
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Wrap(
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.facebook),
+                                title: const Text('Compartir en Facebook'),
+                                onTap: () async {
+                                  final shareUrl = 'https://carretera.com/my_bookings/ViFluuAisFgMShHlZ8pf8622GoH3';
+                                  final facebookUrl =
+                                      'https://www.facebook.com/sharer/sharer.php?u=$shareUrl';
+
+                                  if (await canLaunch(facebookUrl)) {
+                                    await launch(facebookUrl);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'No se pudo abrir Facebook para compartir.'),
+                                      ),
+                                    );
+                                  }
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.camera_alt),
+                                title: const Text('Compartir en Instagram'),
+                                onTap: () async {
+                                  final url = Uri.encodeFull(
+                                      'https://www.instagram.com/?text=$shareContent');
+                                  if (await canLaunch(url)) {
+                                    await launch(url);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'No se pudo abrir Instagram para compartir.'),
+                                      ),
+                                    );
+                                  }
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              if (kIsWeb) // Si está en el navegador, dar opción de copiar al portapapeles
+                                ListTile(
+                                  leading: const Icon(Icons.copy),
+                                  title: const Text('Copiar al portapapeles'),
+                                  onTap: () {
+                                    Clipboard.setData(
+                                            ClipboardData(text: shareContent))
+                                        .then((_) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text('Copiado al portapapeles'),
+                                      ));
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               );
