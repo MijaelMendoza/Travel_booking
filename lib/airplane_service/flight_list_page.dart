@@ -13,7 +13,10 @@ class FlightListPage extends StatefulWidget {
 class _FlightListPageState extends State<FlightListPage> {
   final AirlineService _airlineService = AirlineService();
   final AuthService _authService = AuthService();
+  final TextEditingController _searchController = TextEditingController();
+
   List<Airline> _flights = [];
+  List<Airline> _filteredFlights = [];
   bool _isAdmin = false;
 
   @override
@@ -21,6 +24,7 @@ class _FlightListPageState extends State<FlightListPage> {
     super.initState();
     _checkAdmin();
     _loadFlights();
+    _searchController.addListener(_filterFlights);
   }
 
   Future<void> _checkAdmin() async {
@@ -43,12 +47,24 @@ class _FlightListPageState extends State<FlightListPage> {
       final flights = await _airlineService.getAllAirlines();
       setState(() {
         _flights = flights;
+        _filteredFlights = flights; // Copia inicial para búsquedas
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar los vuelos: $e')),
       );
     }
+  }
+
+  void _filterFlights() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredFlights = _flights
+          .where((flight) =>
+              flight.airlineBrand.toLowerCase().contains(query) ||
+              flight.destination.toLowerCase().contains(query))
+          .toList();
+    });
   }
 
   Future<void> _deleteFlight(String flightId) async {
@@ -222,79 +238,98 @@ class _FlightListPageState extends State<FlightListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Vuelos'),
-        leading: _isAdmin
-            ? IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _showFlightDialog(),
-              )
-            : null,
-      ),
-      body: _flights.isEmpty
-          ? const Center(
-              child: Text(
-                'No hay vuelos registrados.',
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              itemCount: _flights.length,
-              itemBuilder: (context, index) {
-                final flight = _flights[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.asset(
-                            'assets/icons/airplane.jpg',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Marca: ${flight.airlineBrand}',
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              Text('Destino: ${flight.destination}'),
-                              Text(
-                                'Precio: ${flight.price.toStringAsFixed(2)} EUR',
-                              ),
-                              Text('Salida: ${flight.departureDate.toLocal()}'),
-                              Text('Hora: ${flight.departureTime?.toLocal()}'),
-                              Text('Regreso: ${flight.returnDate.toLocal()}'),
-                              Text('Hora: ${flight.returnTime?.toLocal()}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (_isAdmin) ...[
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => _showFlightDialog(flight: flight),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => _deleteFlight(flight.id),
-                        ),
-                      ],
-                    ],
-                  ),
-                );
-              },
+        backgroundColor: Colors.blueGrey,
+        actions: [
+          if (_isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () => _showFlightDialog(),
             ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Campo de búsqueda
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                labelText: 'Buscar por destino o marca',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _filteredFlights.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No se encontraron vuelos.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _filteredFlights.length,
+                    itemBuilder: (context, index) {
+                      final flight = _filteredFlights[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              'assets/icons/airplane.jpg', // Imagen predeterminada
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          title: Text(
+                            flight.airlineBrand,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${flight.destination} - \$${flight.price.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                          ),
+                          trailing: _isAdmin
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () => _showFlightDialog(flight: flight),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () => _deleteFlight(flight.id),
+                                    ),
+                                  ],
+                                )
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

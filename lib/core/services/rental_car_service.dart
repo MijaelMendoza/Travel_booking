@@ -15,6 +15,10 @@ class RentalCarService {
   final String imgbbApiKey =
       '2c68fb0d7ff2f04835d1da3cf672e0a3'; // Inserta tu clave de API aquí
 
+  // URL predeterminada para imágenes
+  final String defaultImageUrl =
+      "https://via.placeholder.com/150"; // Imagen predeterminada
+
   // Función para leer la imagen y convertirla en Uint8List
   Future<Uint8List> _loadImageBytes(html.File file) async {
     final reader = html.FileReader();
@@ -56,12 +60,20 @@ class RentalCarService {
           final responseData = jsonDecode(responseBody);
           imageUrls.add(responseData['data']['url']);
         } else {
-          throw Exception('Error al subir la imagen: ${response.reasonPhrase}');
+          print('Error al subir la imagen: ${response.reasonPhrase}');
         }
       } catch (e) {
-        throw Exception('Error al subir la imagen a Imgbb: $e');
+        print('Error al subir la imagen a Imgbb: $e');
+        continue;
       }
     }
+
+    // Si no se pudieron subir imágenes, usar la imagen predeterminada
+    if (imageUrls.isEmpty) {
+      print("No se pudieron subir imágenes, usando imagen predeterminada.");
+      imageUrls.add(defaultImageUrl);
+    }
+
     return imageUrls;
   }
 
@@ -75,13 +87,8 @@ class RentalCarService {
     required bool isAvailable,
   }) async {
     try {
-      // Subir todas las imágenes y obtener sus URLs
+      // Intentar subir todas las imágenes
       List<String> imageUrls = await _uploadImagesToImgbb(carImages);
-
-      // Verificar que al menos una URL fue generada
-      if (imageUrls.isEmpty) {
-        throw Exception('No se pudieron subir las imágenes');
-      }
 
       // Obtener información del usuario autenticado
       final user = _auth.currentUser;

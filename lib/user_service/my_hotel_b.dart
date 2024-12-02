@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyHotelBPage extends StatelessWidget {
-  const MyHotelBPage({Key? key}) : super(key: key);
+  final bool showInOverlay;
+
+  const MyHotelBPage({Key? key, required this.showInOverlay}) : super(key: key);
 
   Future<List<Map<String, dynamic>>> _fetchUserBookings() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -20,62 +22,75 @@ class MyHotelBPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Mis Reservas"),
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _fetchUserBookings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    Widget content = FutureBuilder<List<Map<String, dynamic>>>(
+      future: _fetchUserBookings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                "No tienes reservas realizadas.",
-                style: TextStyle(fontSize: 16),
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              "No tienes reservas realizadas.",
+              style: TextStyle(fontSize: 16),
+            ),
+          );
+        }
+
+        final bookings = snapshot.data!;
+
+        return ListView.builder(
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookings[index];
+            final checkInDate = DateTime.parse(booking['checkInDate']);
+            final checkOutDate = DateTime.parse(booking['checkOutDate']);
+            final formattedCheckIn =
+                "${checkInDate.day}/${checkInDate.month}/${checkInDate.year}";
+            final formattedCheckOut =
+                "${checkOutDate.day}/${checkOutDate.month}/${checkOutDate.year}";
+
+            return Card(
+              margin: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text(booking['hotelName'] ?? 'Nombre no disponible'),
+                subtitle: Text(
+                    "Desde: $formattedCheckIn - Hasta: $formattedCheckOut"),
+                trailing: Text(
+                  "\$${booking['totalPrice']?.toStringAsFixed(2) ?? '0.00'}",
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  _showBookingDetails(context, booking);
+                },
               ),
             );
-          }
-
-          final bookings = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: bookings.length,
-            itemBuilder: (context, index) {
-              final booking = bookings[index];
-              final checkInDate = DateTime.parse(booking['checkInDate']);
-              final checkOutDate = DateTime.parse(booking['checkOutDate']);
-              final formattedCheckIn =
-                  "${checkInDate.day}/${checkInDate.month}/${checkInDate.year}";
-              final formattedCheckOut =
-                  "${checkOutDate.day}/${checkOutDate.month}/${checkOutDate.year}";
-
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text(booking['hotelName'] ?? 'Nombre no disponible'),
-                  subtitle: Text(
-                      "Desde: $formattedCheckIn - Hasta: $formattedCheckOut"),
-                  trailing: Text(
-                    "\$${booking['totalPrice']?.toStringAsFixed(2) ?? '0.00'}",
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  onTap: () {
-                    _showBookingDetails(context, booking);
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
+          },
+        );
+      },
     );
+
+    return showInOverlay
+        ? Dialog(
+            insetPadding: const EdgeInsets.all(16.0),
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text("Mis Reservas"),
+                automaticallyImplyLeading: false,
+              ),
+              body: content,
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: const Text("Mis Reservas"),
+            ),
+            body: content,
+          );
   }
 
   void _showBookingDetails(BuildContext context, Map<String, dynamic> booking) {
