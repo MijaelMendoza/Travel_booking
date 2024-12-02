@@ -5,16 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AirlineService {
   final CollectionReference _airlines =
       FirebaseFirestore.instance.collection('airlines');
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Crear una nueva aerolínea
   Future<void> createAirline(Airline airline) async {
     try {
-      print('Guardando aerolínea con ID: ${airline.id}');
       await _airlines.doc(airline.id).set(airline.toMap());
-      print('Aerolínea guardada exitosamente.');
     } catch (e) {
-      print('Error al guardar la aerolínea: $e');
       throw Exception('Error al guardar la aerolínea: $e');
     }
   }
@@ -22,11 +18,8 @@ class AirlineService {
   // Actualizar información de una aerolínea
   Future<void> updateAirline(String airlineId, Map<String, dynamic> updates) async {
     try {
-      print('Actualizando aerolínea con ID: $airlineId');
       await _airlines.doc(airlineId).update(updates);
-      print('Aerolínea actualizada exitosamente.');
     } catch (e) {
-      print('Error al actualizar la aerolínea: $e');
       throw Exception('Error al actualizar la aerolínea: $e');
     }
   }
@@ -34,11 +27,8 @@ class AirlineService {
   // Eliminar una aerolínea
   Future<void> deleteAirline(String airlineId) async {
     try {
-      print('Eliminando aerolínea con ID: $airlineId');
       await _airlines.doc(airlineId).delete();
-      print('Aerolínea eliminada exitosamente.');
     } catch (e) {
-      print('Error al eliminar la aerolínea: $e');
       throw Exception('Error al eliminar la aerolínea: $e');
     }
   }
@@ -52,23 +42,29 @@ class AirlineService {
       }
       return null;
     } catch (e) {
-      print('Error al obtener la aerolínea: $e');
       throw Exception('Error al obtener la aerolínea: $e');
     }
   }
 
   // Obtener todas las aerolíneas
+ 
   Future<List<Airline>> getAllAirlines() async {
     try {
       final querySnapshot = await _airlines.get();
       return querySnapshot.docs.map((doc) {
-        return Airline.fromMap(doc.data() as Map<String, dynamic>);
+        final data = doc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          return Airline.fromMap(data);
+        } else {
+          throw Exception('Datos de aerolínea nulos');
+        }
       }).toList();
     } catch (e) {
-      print('Error al obtener las aerolíneas: $e');
       throw Exception('Error al obtener las aerolíneas: $e');
     }
   }
+
+
 
   // Filtrar aerolíneas por destino
   Future<List<Airline>> getAirlinesByDestination(String destination) async {
@@ -80,7 +76,6 @@ class AirlineService {
         return Airline.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     } catch (e) {
-      print('Error al filtrar las aerolíneas: $e');
       throw Exception('Error al filtrar las aerolíneas: $e');
     }
   }

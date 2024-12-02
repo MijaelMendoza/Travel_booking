@@ -1,8 +1,7 @@
-// lib/pages/flight_list_page.dart
 import 'package:carretera/core/models/aerlineas.dart';
 import 'package:carretera/core/services/aeroline_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:carretera/core/services/auth_service.dart';
 
 class FlightListPage extends StatefulWidget {
   const FlightListPage({Key? key}) : super(key: key);
@@ -13,12 +12,30 @@ class FlightListPage extends StatefulWidget {
 
 class _FlightListPageState extends State<FlightListPage> {
   final AirlineService _airlineService = AirlineService();
+  final AuthService _authService = AuthService();
   List<Airline> _flights = [];
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
+    _checkAdmin();
     _loadFlights();
+  }
+
+  Future<void> _checkAdmin() async {
+    try {
+      final user = await _authService.getAuthenticatedUser();
+      if (user != null && user.nivel == "admin") {
+        setState(() {
+          _isAdmin = true;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al verificar el nivel de usuario: $e')),
+      );
+    }
   }
 
   Future<void> _loadFlights() async {
@@ -60,6 +77,11 @@ class _FlightListPageState extends State<FlightListPage> {
             text: flight?.departureDate.toIso8601String() ?? '');
     final TextEditingController returnDateController =
         TextEditingController(text: flight?.returnDate.toIso8601String() ?? '');
+    final TextEditingController departureTimeController =
+        TextEditingController(
+            text: flight?.departureTime?.toIso8601String() ?? '');
+    final TextEditingController returnTimeController =
+        TextEditingController(text: flight?.returnTime?.toIso8601String() ?? '');
 
     final isEditing = flight != null;
 
@@ -115,6 +137,46 @@ class _FlightListPageState extends State<FlightListPage> {
                   }
                 },
               ),
+              TextField(
+                controller: departureTimeController,
+                readOnly: true,
+                decoration: const InputDecoration(labelText: 'Hora de salida'),
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (pickedTime != null) {
+                    departureTimeController.text = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    ).toIso8601String();
+                  }
+                },
+              ),
+              TextField(
+                controller: returnTimeController,
+                readOnly: true,
+                decoration: const InputDecoration(labelText: 'Hora de regreso'),
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (pickedTime != null) {
+                    returnTimeController.text = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    ).toIso8601String();
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -132,6 +194,8 @@ class _FlightListPageState extends State<FlightListPage> {
                 price: double.tryParse(priceController.text) ?? 0.0,
                 departureDate: DateTime.parse(departureDateController.text),
                 returnDate: DateTime.parse(returnDateController.text),
+                departureTime: DateTime.parse(departureTimeController.text),
+                returnTime: DateTime.parse(returnTimeController.text),
               );
 
               if (isEditing) {
@@ -158,10 +222,12 @@ class _FlightListPageState extends State<FlightListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Vuelos'),
-        leading: IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () => _showFlightDialog(),
-        ),
+        leading: _isAdmin
+            ? IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => _showFlightDialog(),
+              )
+            : null,
       ),
       body: _flights.isEmpty
           ? const Center(
@@ -179,13 +245,12 @@ class _FlightListPageState extends State<FlightListPage> {
                       horizontal: 16.0, vertical: 8.0),
                   child: Row(
                     children: [
-                      // Default image for the flight
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
-                            'assets/images/airplane.jpg', // Default image
+                            'assets/icons/airplane.jpg',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -201,37 +266,30 @@ class _FlightListPageState extends State<FlightListPage> {
                               Text(
                                 'Marca: ${flight.airlineBrand}',
                                 style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
-                              Text(
-                                'Destino: ${flight.destination}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
+                              Text('Destino: ${flight.destination}'),
                               Text(
                                 'Precio: ${flight.price.toStringAsFixed(2)} EUR',
-                                style: const TextStyle(fontSize: 14),
                               ),
-                              Text(
-                                'Salida: ${flight.departureDate.toLocal()}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                'Regreso: ${flight.returnDate.toLocal()}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
+                              Text('Salida: ${flight.departureDate.toLocal()}'),
+                              Text('Hora: ${flight.departureTime?.toLocal()}'),
+                              Text('Regreso: ${flight.returnDate.toLocal()}'),
+                              Text('Hora: ${flight.returnTime?.toLocal()}'),
                             ],
                           ),
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () => _showFlightDialog(flight: flight),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteFlight(flight.id),
-                      ),
+                      if (_isAdmin) ...[
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _showFlightDialog(flight: flight),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _deleteFlight(flight.id),
+                        ),
+                      ],
                     ],
                   ),
                 );
